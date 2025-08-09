@@ -15,4 +15,4 @@ export const Building: React.FC<BuildingProps> = ({ position = new Vector3(0, 0,
       </mesh>
     </group>
   );
-}
+};

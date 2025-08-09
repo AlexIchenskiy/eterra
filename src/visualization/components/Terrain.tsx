@@ -13,4 +13,4 @@ export const Terrain: React.FC<TerrainProps> = ({ position = new Vector3(0, 0, 0
       </mesh>
     </group>
   );
-}
+};

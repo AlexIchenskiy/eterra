@@ -1,17 +1,20 @@
-import { useFrame, useThree } from "@react-three/fiber"
-import { useEffect, useRef, useState } from "react"
-import { useScene } from "../../state/scene/hooks/useScene.hook"
-import { MathUtils, Vector3 } from "three"
+import { useFrame, useThree } from "@react-three/fiber";
+import React, { useEffect, useRef, useState } from "react";
+import { useScene } from "../../state/scene/hooks/useScene.hook";
+import { MathUtils, Vector3 } from "three";
+import { CELL_SIZE, CHUNK_SIZE, DEFAULT_HEIGHT } from "../../core/utils/constants";
 
 const VELOCITY = 0.5;
 const ROTATION_SPEED = 0.005;
-const DEFAULT_HEIGHT = 20;
 
-export default function Camera() {
+interface CameraProps {
+  position?: Vector3;
+}
+
+const Camera: React.FC<CameraProps> = (props: CameraProps) => {
   const { camera, gl } = useThree();
 
   const [isDragging, setIsDragging] = useState(false);
-  const [cameraPos, setCameraPos] = useState({ x: 0, y: 0 });
 
   const lastMousePos = useRef({ x: 0, y: 0 });
   const keysPressed = useRef<{ [key: string]: boolean }>({});
@@ -20,14 +23,24 @@ export default function Camera() {
   const targetYaw = useRef(0);
   const currentYaw = useRef(0);
 
-  const { state, updateCameraPosition, getActiveChunks } = useScene();
+  const { state, updateCameraPosition } = useScene();
+
+  useEffect(() => {
+    if (props.position) {
+      targetPosition.current.set(props.position.x, props.position.y, props.position.z);
+      camera.position.setX(props.position.x);
+      camera.position.setY(props.position.y);
+      camera.position.setZ(props.position.z);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const onPointerDown = (e: MouseEvent) => {
       setIsDragging(true);
       lastMousePos.current = { x: e.clientX, y: e.clientY };
-    }
-    const onPointerUp = () => setIsDragging(false)
+    };
+    const onPointerUp = () => setIsDragging(false);
     const onPointerMove = (e: MouseEvent) => {
       if (!isDragging) return;
 
@@ -35,34 +48,30 @@ export default function Camera() {
       targetYaw.current -= deltaX * ROTATION_SPEED;
 
       lastMousePos.current = { x: e.clientX, y: e.clientY };
-    }
+    };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      keysPressed.current[e.key.toLowerCase()] = true
-    }
+      keysPressed.current[e.key.toLowerCase()] = true;
+    };
     const onKeyUp = (e: KeyboardEvent) => {
-      keysPressed.current[e.key.toLowerCase()] = false
-    }
+      keysPressed.current[e.key.toLowerCase()] = false;
+    };
 
     const canvas = gl.domElement;
     canvas.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
 
     return () => {
       canvas.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('keyup', onKeyUp)
-    }
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
   }, [isDragging, gl.domElement]);
-
-  useEffect(() => {
-    updateCameraPosition(cameraPos);
-  }, [cameraPos]);
 
   useFrame(() => {
     currentYaw.current = MathUtils.lerp(currentYaw.current, targetYaw.current, 0.05);
@@ -71,21 +80,21 @@ export default function Camera() {
       -Math.sin(currentYaw.current),
       0,
       -Math.cos(currentYaw.current)
-    ).normalize()
+    ).normalize();
 
-    const right = new Vector3().crossVectors(direction, new Vector3(0, 1, 0)).normalize()
+    const right = new Vector3().crossVectors(direction, new Vector3(0, 1, 0)).normalize();
 
     if (keysPressed.current['w']) {
-      targetPosition.current.addScaledVector(direction, -VELOCITY)
+      targetPosition.current.addScaledVector(direction, -VELOCITY);
     }
     if (keysPressed.current['s']) {
-      targetPosition.current.addScaledVector(direction, VELOCITY)
+      targetPosition.current.addScaledVector(direction, VELOCITY);
     }
     if (keysPressed.current['a']) {
-      targetPosition.current.addScaledVector(right, VELOCITY)
+      targetPosition.current.addScaledVector(right, VELOCITY);
     }
     if (keysPressed.current['d']) {
-      targetPosition.current.addScaledVector(right, -VELOCITY)
+      targetPosition.current.addScaledVector(right, -VELOCITY);
     }
 
     targetPosition.current.y = DEFAULT_HEIGHT;
@@ -111,10 +120,14 @@ export default function Camera() {
 
     camera.lookAt(lookAtPos);
 
-    if (camera.position.x !== cameraPos.x || camera.position.z !== cameraPos.y) {
-      setCameraPos({ x: camera.position.x, y: camera.position.z });
+    if ((state.position.x === 0 || state.position.y === 0)
+      || (Math.abs(state.position.x - Math.floor(camera.position.x)) > (CHUNK_SIZE * CELL_SIZE) / 4)
+      || (Math.abs(state.position.y - Math.floor(camera.position.z)) > (CHUNK_SIZE * CELL_SIZE) / 4)) {
+      updateCameraPosition({ x: camera.position.x, y: camera.position.z });
     }
-  })
+  });
 
   return null;
-}
+};
+
+export default Camera;

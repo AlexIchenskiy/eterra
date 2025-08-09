@@ -7,7 +7,7 @@ function App() {
     <SceneDataProvider generator={generators.grid} renderDistance={1} >
       <Scene />
     </SceneDataProvider>
-  )
+  );
 }
 
 export default App;
