@@ -8,11 +8,14 @@ import { Terrain } from './components/Terrain';
 import React from 'react';
 import { seededRandomRange } from './utils/random.utils';
 import { Sunlight } from './light/Sunlight';
+import { Road } from './components/Road';
 
 export default function Scene() {
   const { getActiveChunks } = useScene();
 
   const activeChunks = getActiveChunks();
+
+  console.log(activeChunks);
 
   return (
     <div id='canvas-container' className='w-full h-full'>
@@ -35,21 +38,50 @@ export default function Scene() {
 
             {chunk.data.map((row, rowIndex) =>
               row.map((value, colIndex) => {
-                if (value === 1) {
-                  const x = chunk.position.x * CHUNK_SIZE * CELL_SIZE + colIndex * CELL_SIZE;
-                  const height = seededRandomRange('building-height-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE * 1.5);
-                  const z = chunk.position.y * CHUNK_SIZE * CELL_SIZE + rowIndex * CELL_SIZE;
+                const x = chunk.position.x * CHUNK_SIZE * CELL_SIZE + colIndex * CELL_SIZE;
+                const z = chunk.position.y * CHUNK_SIZE * CELL_SIZE + rowIndex * CELL_SIZE;
+                const keyData = `${chunk.position.x}-${chunk.position.y}-${rowIndex}-${colIndex}`;
+                switch (value) {
+                  case 1:
+                    {
+                      const height = seededRandomRange('building-height-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE * 1.5);
 
-                  return (
-                    <Building
-                      key={`${chunk.position.x}-${chunk.position.y}-${rowIndex}-${colIndex}`}
-                      position={new Vector3(x, height / 2, z)}
-                      size={seededRandomRange('building-size-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE)}
-                      height={height}
-                    />
-                  );
+                      return (
+                        <Building
+                          key={`building-${keyData}`}
+                          position={new Vector3(x, height / 2, z)}
+                          size={seededRandomRange('building-size-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE)}
+                          height={height}
+                        />
+                      );
+                    }
+                  case 2:
+                    return (
+                      <Road
+                        key={`road-${keyData}`}
+                        position={new Vector3(x, 0, z)}
+                        type='cross'
+                      />
+                    );
+                  case 3:
+                    return (
+                      <Road
+                        key={`road-${keyData}`}
+                        position={new Vector3(x, 0, z)}
+                        type='vertical'
+                      />
+                    );
+                  case 4:
+                    return (
+                      <Road
+                        key={`road-${keyData}`}
+                        position={new Vector3(x, 0, z)}
+                        type='horizontal'
+                      />
+                    );
+                  default:
+                    return null;
                 }
-                return null;
               })
             )}
           </React.Fragment>

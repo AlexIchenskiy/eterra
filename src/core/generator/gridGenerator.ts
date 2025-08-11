@@ -10,10 +10,16 @@ export class GridGenerator implements IGenerator {
       data[i] = [];
 
       for (let j = 0; j < CHUNK_SIZE; j++) {
-        if (i % BLOCK_SIZE === 0 || j % BLOCK_SIZE === 0) {
-          data[i][j] = 0;
+        if (i % BLOCK_SIZE === 0 && j % BLOCK_SIZE === 0) {
+          data[i][j] = 2; // Cross
+        }
+        else if (i % BLOCK_SIZE === 0) {
+          data[i][j] = 3; // Vertical road (y-axis)
+        }
+        else if (j % BLOCK_SIZE === 0) {
+          data[i][j] = 4; // Horizontal road (x-axis)
         } else {
-          data[i][j] = 1;
+          data[i][j] = 1; // Building
         }
       }
     }
