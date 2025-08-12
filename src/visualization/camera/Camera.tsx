@@ -17,6 +17,8 @@ const Camera: React.FC<CameraProps> = (props: CameraProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const lastMousePos = useRef({ x: 0, y: 0 });
+  const touchStart = useRef({ x: 0, y: 0 });
+
   const keysPressed = useRef<{ [key: string]: boolean }>({});
 
   const targetPosition = useRef(new Vector3(0, DEFAULT_HEIGHT, 0));
@@ -58,20 +60,65 @@ const Camera: React.FC<CameraProps> = (props: CameraProps) => {
     };
 
     const canvas = gl.domElement;
-    canvas.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
 
     return () => {
-      canvas.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
   }, [isDragging, gl.domElement]);
+
+  useEffect(() => {
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      console.log('touch start');
+      touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      setIsDragging(true);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging || e.touches.length !== 1 || touchStart.current.x === 0 || touchStart.current.y === 0) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStart.current.x;
+      const deltaY = touch.clientY - touchStart.current.y;
+
+      targetYaw.current -= deltaX * ROTATION_SPEED;
+
+      const direction = new Vector3(
+        -Math.sin(currentYaw.current),
+        0,
+        -Math.cos(currentYaw.current)
+      ).normalize();
+      targetPosition.current.addScaledVector(direction, deltaY * VELOCITY / 10);
+
+      touchStart.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const onTouchEnd = () => {
+      setIsDragging(false);
+      touchStart.current = { x: 0, y: 0 };
+    };
+
+    const canvas = gl.domElement;
+    canvas.addEventListener("touchstart", onTouchStart, { passive: false });
+    canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+    canvas.addEventListener("touchend", onTouchEnd);
+
+    return () => {
+      canvas.removeEventListener("touchstart", onTouchStart);
+      canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isDragging, gl.domElement]);
+
 
   useFrame(() => {
     currentYaw.current = MathUtils.lerp(currentYaw.current, targetYaw.current, 0.05);
@@ -107,7 +154,7 @@ const Camera: React.FC<CameraProps> = (props: CameraProps) => {
     camera.position.y = DEFAULT_HEIGHT;
 
     const distanceAhead = 10;
-    const pitchAngle = 15 * (Math.PI / 180);
+    const pitchAngle = 25 * (Math.PI / 180);
     const lookAtPos = camera.position.clone();
 
     const offsetX = Math.sin(currentYaw.current) * distanceAhead * Math.cos(pitchAngle);

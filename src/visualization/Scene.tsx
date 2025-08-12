@@ -6,7 +6,7 @@ import { useScene } from '../state/scene/hooks/useScene.hook';
 import { CELL_SIZE, CHUNK_SIZE, DAY_SKY_COLOR, DEFAULT_HEIGHT } from '../core/utils/constants';
 import { Terrain } from './components/Terrain';
 import React from 'react';
-import { seededRandomRange } from './utils/random.utils';
+import { seededRandomRange, seededRandomRangeInt } from './utils/random.utils';
 import { Sunlight } from './light/Sunlight';
 import { Road } from './components/Road';
 
@@ -14,8 +14,6 @@ export default function Scene() {
   const { getActiveChunks } = useScene();
 
   const activeChunks = getActiveChunks();
-
-  console.log(activeChunks);
 
   return (
     <div id='canvas-container' className='w-full h-full'>
@@ -26,7 +24,9 @@ export default function Scene() {
       >
         <ambientLight intensity={1} />
         <Sunlight />
-        <Camera position={new Vector3((CHUNK_SIZE * CELL_SIZE) / 2, DEFAULT_HEIGHT, (CHUNK_SIZE * CELL_SIZE) / 2)} />
+        <Camera
+          position={new Vector3((CHUNK_SIZE * CELL_SIZE) / 2, DEFAULT_HEIGHT, (CHUNK_SIZE * CELL_SIZE) / 2)}
+        />
         <fog attach="fog" args={[DAY_SKY_COLOR, (CHUNK_SIZE * CELL_SIZE) * 0.6, (CHUNK_SIZE * CELL_SIZE) * 0.9]} />
         {activeChunks.map((chunk) => (
           <React.Fragment key={`chunk-${chunk.position.x}-${chunk.position.y}`}>
@@ -44,14 +44,14 @@ export default function Scene() {
                 switch (value) {
                   case 1:
                     {
-                      const height = seededRandomRange('building-height-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE * 1.5);
+                      const floors = seededRandomRangeInt('building-height-' + rowIndex + '-' + colIndex, 1, 5);
 
                       return (
                         <Building
                           key={`building-${keyData}`}
-                          position={new Vector3(x, height / 2, z)}
+                          position={new Vector3(x, 0, z)}
                           size={seededRandomRange('building-size-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE)}
-                          height={height}
+                          floors={floors}
                         />
                       );
                     }
