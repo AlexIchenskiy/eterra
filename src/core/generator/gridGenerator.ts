@@ -19,7 +19,15 @@ export class GridGenerator implements IGenerator {
         else if (j % BLOCK_SIZE === 0) {
           data[i][j] = 4; // Horizontal road (x-axis)
         } else {
-          data[i][j] = 1; // Building
+          const localI = i % BLOCK_SIZE;
+          const localJ = j % BLOCK_SIZE;
+
+          const center = Math.floor(BLOCK_SIZE / 2);
+          if (localI === center && localJ === center) {
+            data[i][j] = 0; // Empty space
+          } else {
+            data[i][j] = 1; // Building
+          }
         }
       }
     }

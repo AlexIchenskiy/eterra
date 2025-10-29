@@ -1,11 +1,12 @@
-import { FLOOR_HEIGHT } from "../../core/utils/constants";
+import { BUILDING_COLORS, FLOOR_HEIGHT } from "../../../core/utils/constants";
 import { Vector3 } from "three";
 import * as THREE from "three";
 
-interface BuildingProps {
+interface RegularBuildingProps {
   position: Vector3;
   size?: number,
   floors?: number,
+  color?: string,
 }
 
 const createWindow = (w: number, h: number) => {
@@ -31,7 +32,7 @@ const createWindow = (w: number, h: number) => {
   return new THREE.Mesh(geometry, material);
 };
 
-export const Building: React.FC<BuildingProps> = ({ position = new Vector3(0, 0, 0), size = 5, floors = 2 }) => {
+export const RegularBuilding: React.FC<RegularBuildingProps> = ({ position = new Vector3(0, 0, 0), size = 5, floors = 2, color = BUILDING_COLORS[0] }) => {
   const height = FLOOR_HEIGHT * floors;
   const windowWidth = size / 4;
   const windowHeight = FLOOR_HEIGHT / 4;
@@ -61,7 +62,7 @@ export const Building: React.FC<BuildingProps> = ({ position = new Vector3(0, 0,
     <group position={new Vector3(position.x, height / 2, position.z)}>
       <mesh>
         <boxGeometry args={[size, height, size]} />
-        <meshPhongMaterial />
+        <meshPhongMaterial color={color} />
       </mesh>
       {windows}
     </group>

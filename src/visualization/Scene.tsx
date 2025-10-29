@@ -1,9 +1,9 @@
 import { Canvas } from '@react-three/fiber';
 import Camera from './camera/Camera';
-import { Building } from './components/Building';
+import { Building } from './components/building/Building';
 import { Vector3 } from 'three';
 import { useScene } from '../state/scene/hooks/useScene.hook';
-import { CELL_SIZE, CHUNK_SIZE, DAY_SKY_COLOR, DEFAULT_HEIGHT } from '../core/utils/constants';
+import { BUILDING_COLORS, BUILDING_LIGHT_COLORS, BUILDING_OPTIONS, CELL_SIZE, CHUNK_SIZE, DAY_SKY_COLOR, DEFAULT_HEIGHT } from '../core/utils/constants';
 import { Terrain } from './components/Terrain';
 import React from 'react';
 import { seededRandomRange, seededRandomRangeInt } from './utils/random.utils';
@@ -52,6 +52,9 @@ export default function Scene() {
                           position={new Vector3(x, 0, z)}
                           size={seededRandomRange('building-size-' + rowIndex + '-' + colIndex, CELL_SIZE / 2, CELL_SIZE)}
                           floors={floors}
+                          color={BUILDING_COLORS[seededRandomRangeInt('building-color-' + rowIndex + '-' + colIndex, 0, BUILDING_COLORS.length - 1)]}
+                          lightColor={BUILDING_LIGHT_COLORS[seededRandomRangeInt('building-light-color-' + rowIndex + '-' + colIndex, 0, BUILDING_LIGHT_COLORS.length - 1)]}
+                          variant={BUILDING_OPTIONS[seededRandomRange('building-variant-' + rowIndex + '-' + colIndex, 0, 1) > 0.8 ? 1 : 0]}
                         />
                       );
                     }
