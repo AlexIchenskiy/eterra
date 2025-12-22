@@ -11,6 +11,7 @@ import { AmbientLight } from './light/AmbientLight';
 import { Sunlight } from './light/Sunlight';
 import { Road } from './components/Road';
 import { Sky } from './components/Sky';
+import { Weather } from './effects/Weather';
 import { CELL_SIZE, CHUNK_SIZE, DEFAULT_HEIGHT } from '../core/utils/constants';
 
 export default function Scene() {
@@ -24,6 +25,7 @@ export default function Scene() {
         <Sky />
         <AmbientLight />
         <Sunlight />
+        <Weather />
         <Camera
           position={new Vector3((CHUNK_SIZE * CELL_SIZE) / 2, DEFAULT_HEIGHT, (CHUNK_SIZE * CELL_SIZE) / 2)}
         />

@@ -3,10 +3,13 @@ import { IChunk, IPosition } from '../../../core/models';
 import { IGenerator } from '../../../core/generator/generator';
 import { CELL_SIZE, CHUNK_SIZE } from '../../../core/utils/constants';
 
+export type WeatherType = 'clear' | 'rain' | 'snow';
+
 export interface ISceneState {
   chunks: Map<string, IChunk>;
   position: IPosition;
   timeOfDay: number;
+  weather: WeatherType;
 }
 
 export interface ISceneActions {
@@ -14,6 +17,7 @@ export interface ISceneActions {
   getActiveChunks: () => IChunk[];
   updateChunks: (generator: IGenerator, renderDistance: number) => void;
   setTimeOfDay: (time: number) => void;
+  setWeather: (weather: WeatherType) => void;
 }
 
 export interface ISceneStore extends ISceneState, ISceneActions {}
@@ -22,6 +26,7 @@ export const useSceneStore = create<ISceneStore>((set, get) => ({
   chunks: new Map(),
   position: { x: 0, y: 0 },
   timeOfDay: 0,
+  weather: 'clear',
 
   updateCameraPosition: (position: IPosition) => {
     set({ position });
@@ -68,5 +73,9 @@ export const useSceneStore = create<ISceneStore>((set, get) => ({
   setTimeOfDay: (time: number) => {
     const clampedTime = ((time % 24) + 24) % 24;
     set({ timeOfDay: clampedTime });
+  },
+
+  setWeather: (weather: WeatherType) => {
+    set({ weather });
   },
 }));

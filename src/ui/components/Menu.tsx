@@ -1,18 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { X, Clock, Sun, Sunrise, Sunset, Moon } from 'lucide-react';
+import { X, Clock, Sun, Sunrise, Sunset, Moon, Cloud, CloudRain, CloudSnow } from 'lucide-react';
 import { useUIStore } from '../../state/ui/store/ui.store';
 import { useSceneStore } from '../../state/scene/store/scene.store';
 import { CircleSelector, ICircleSelectorOption } from './CircleSelector';
 
-interface IMenuProps {
-  children?: React.ReactNode;
-}
-
-export const Menu: React.FC<IMenuProps> = () => {
+export const Menu: React.FC = () => {
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
   const openMenu = useUIStore((s) => s.openMenu);
   const closeMenu = useUIStore((s) => s.closeMenu);
   const setTimeOfDay = useSceneStore((s) => s.setTimeOfDay);
+  const setWeather = useSceneStore((s) => s.setWeather);
 
   const lastTapRef = useRef(0);
   const lastClickRef = useRef(0);
@@ -22,6 +19,12 @@ export const Menu: React.FC<IMenuProps> = () => {
     { id: 'noon', icon: Sun, label: 'Noon (12:00)', onClick: () => setTimeOfDay(12) },
     { id: 'dusk', icon: Sunset, label: 'Dusk (18:00)', onClick: () => setTimeOfDay(18) },
     { id: 'night', icon: Moon, label: 'Night (0:00)', onClick: () => setTimeOfDay(0) },
+  ];
+
+  const weatherOptions: ICircleSelectorOption[] = [
+    { id: 'clear', icon: Sun, label: 'Clear', onClick: () => setWeather('clear') },
+    { id: 'rain', icon: CloudRain, label: 'Rain', onClick: () => setWeather('rain') },
+    { id: 'snow', icon: CloudSnow, label: 'Snow', onClick: () => setWeather('snow') },
   ];
 
   useEffect(() => {
@@ -79,6 +82,7 @@ export const Menu: React.FC<IMenuProps> = () => {
         </button>
 
         <CircleSelector icon={Clock} options={timeOptions} />
+        <CircleSelector icon={Cloud} options={weatherOptions} />
       </div>
     </div>
   );
