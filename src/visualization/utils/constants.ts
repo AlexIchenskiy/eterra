@@ -16,7 +16,7 @@ export const AMBIENT_NIGHT_COLOR = new Color('#0a0a1a');
 export const AMBIENT_DAWN_COLOR = new Color('#4a3a5a');
 export const AMBIENT_DAY_COLOR = new Color('#ffffff');
 
-export const AMBIENT_NIGHT_INTENSITY = 0.2;
+export const AMBIENT_NIGHT_INTENSITY = 0.3;
 export const AMBIENT_DAWN_INTENSITY = 0.5;
 export const AMBIENT_DAY_INTENSITY = 1.0;
 
@@ -49,3 +49,22 @@ export const SNOW_DRIFT_SPEED = 0.02;
 export const SNOW_PARTICLE_SIZE = 0.2;
 export const SNOW_COLOR = '#ffffff';
 export const SNOW_OPACITY = 0.8;
+
+export const STREETLIGHT_POLE_COLORS = ['#333333', '#444444', '#2a2a2a', '#1a1a1a'];
+export const STREETLIGHT_POLE_HEIGHT = 4;
+export const STREETLIGHT_POLE_RADIUS = 0.1;
+export const STREETLIGHT_BULB_RADIUS = 0.3;
+
+export const TREE_TRUNK_COLORS = ['#4a3728', '#5c4033', '#3d2914'];
+export const TREE_FOLIAGE_COLORS = ['#228b22', '#2e8b57', '#3cb371', '#006400'];
+export const TREE_TRUNK_HEIGHT = 2;
+export const TREE_TRUNK_RADIUS = 0.15;
+export const TREE_FOLIAGE_RADIUS_X = 1.2;
+export const TREE_FOLIAGE_RADIUS_Y = 1.8;
+export const TREE_FOLIAGE_RADIUS_Z = 1.2;
+
+export const AIRCRAFT_MAX_COUNT = 20;
+export const AIRCRAFT_DESPAWN_CHUNKS = 2.5;
+
+export const VEHICLE_MAX_COUNT = 20;
+export const VEHICLE_DESPAWN_CHUNKS = 2;

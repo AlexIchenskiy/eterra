@@ -25,7 +25,7 @@ export interface ISceneStore extends ISceneState, ISceneActions {}
 export const useSceneStore = create<ISceneStore>((set, get) => ({
   chunks: new Map(),
   position: { x: 0, y: 0 },
-  timeOfDay: 0,
+  timeOfDay: 17,
   weather: 'clear',
 
   updateCameraPosition: (position: IPosition) => {

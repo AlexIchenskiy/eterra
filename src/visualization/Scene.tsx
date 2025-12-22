@@ -1,4 +1,5 @@
 import { Canvas } from '@react-three/fiber';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import Camera from './camera/Camera';
 import { Building } from './components/building/Building';
 import { Vector3 } from 'three';
@@ -12,6 +13,8 @@ import { Sunlight } from './light/Sunlight';
 import { Road } from './components/Road';
 import { Sky } from './components/Sky';
 import { Weather } from './effects/Weather';
+import { FlyingTransport } from './transport/aircraft/FlyingTransport';
+import { GroundTransport } from './transport/vehicles/GroundTransport';
 import { CELL_SIZE, CHUNK_SIZE, DEFAULT_HEIGHT } from '../core/utils/constants';
 
 export default function Scene() {
@@ -26,6 +29,8 @@ export default function Scene() {
         <AmbientLight />
         <Sunlight />
         <Weather />
+        <FlyingTransport />
+        <GroundTransport />
         <Camera
           position={new Vector3((CHUNK_SIZE * CELL_SIZE) / 2, DEFAULT_HEIGHT, (CHUNK_SIZE * CELL_SIZE) / 2)}
         />
@@ -65,6 +70,9 @@ export default function Scene() {
                         key={`road-${keyData}`}
                         position={new Vector3(x, 0, z)}
                         type='cross'
+                        decorations
+                        maxDecorations={4}
+                        seed={`road-${keyData}`}
                       />
                     );
                   case 3:
@@ -73,6 +81,9 @@ export default function Scene() {
                         key={`road-${keyData}`}
                         position={new Vector3(x, 0, z)}
                         type='vertical'
+                        decorations
+                        maxDecorations={2}
+                        seed={`road-${keyData}`}
                       />
                     );
                   case 4:
@@ -81,6 +92,9 @@ export default function Scene() {
                         key={`road-${keyData}`}
                         position={new Vector3(x, 0, z)}
                         type='horizontal'
+                        decorations
+                        maxDecorations={2}
+                        seed={`road-${keyData}`}
                       />
                     );
                   default:
@@ -90,6 +104,13 @@ export default function Scene() {
             )}
           </React.Fragment>
         ))}
+        <EffectComposer>
+          <Bloom
+            intensity={0.2}
+            luminanceThreshold={0.8}
+            luminanceSmoothing={0.9}
+          />
+        </EffectComposer>
       </Canvas>
     </div>
   );
