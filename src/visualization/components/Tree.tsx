@@ -9,6 +9,9 @@ import {
   TREE_FOLIAGE_RADIUS_Z,
 } from '../utils/constants';
 import { seededRandomRangeInt, seededRandomRange } from '../utils/random.utils';
+import { useSceneStore } from '../../state/scene/store/scene.store';
+
+const FOLIAGE_SNOW_COLOR = '#e8f0e8';
 
 interface ITreeProps {
   position: Vector3;
@@ -16,8 +19,11 @@ interface ITreeProps {
 }
 
 export const Tree: React.FC<ITreeProps> = ({ position, seed }) => {
+  const weather = useSceneStore((state) => state.weather);
+  
   const trunkColor = TREE_TRUNK_COLORS[seededRandomRangeInt(seed + '-trunk', 0, TREE_TRUNK_COLORS.length - 1)];
-  const foliageColor = TREE_FOLIAGE_COLORS[seededRandomRangeInt(seed + '-foliage', 0, TREE_FOLIAGE_COLORS.length - 1)];
+  const baseFoliageColor = TREE_FOLIAGE_COLORS[seededRandomRangeInt(seed + '-foliage', 0, TREE_FOLIAGE_COLORS.length - 1)];
+  const foliageColor = weather === 'snow' ? FOLIAGE_SNOW_COLOR : baseFoliageColor;
   
   const scale = seededRandomRange(seed + '-scale', 0.7, 1.3);
   const trunkHeight = TREE_TRUNK_HEIGHT * scale;
