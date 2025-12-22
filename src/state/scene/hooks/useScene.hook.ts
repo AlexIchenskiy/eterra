@@ -1,10 +1,16 @@
-import { useContext } from "react";
-import { ISceneContext, SceneContext } from "../context/scene.context";
+import { useShallow } from 'zustand/react/shallow';
+import { useSceneStore } from '../store/scene.store';
 
-export const useScene = (): ISceneContext => {
-  const context = useContext(SceneContext);
-  if (!context) {
-    throw new Error('useScene must be used within a SceneDataProvider');
-  }
-  return context;
+export const useScene = () => {
+  const state = useSceneStore(
+    useShallow((s) => ({ chunks: s.chunks, position: s.position }))
+  );
+  const updateCameraPosition = useSceneStore((s) => s.updateCameraPosition);
+  const getActiveChunks = useSceneStore((s) => s.getActiveChunks);
+
+  return {
+    state,
+    updateCameraPosition,
+    getActiveChunks,
+  };
 };

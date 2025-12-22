@@ -3,12 +3,15 @@ import Camera from './camera/Camera';
 import { Building } from './components/building/Building';
 import { Vector3 } from 'three';
 import { useScene } from '../state/scene/hooks/useScene.hook';
-import { BUILDING_COLORS, BUILDING_LIGHT_COLORS, BUILDING_OPTIONS, CELL_SIZE, CHUNK_SIZE, DAY_SKY_COLOR, DEFAULT_HEIGHT } from '../core/utils/constants';
+import { BUILDING_COLORS, BUILDING_LIGHT_COLORS, BUILDING_OPTIONS } from './utils/constants';
 import { Terrain } from './components/Terrain';
 import React from 'react';
 import { seededRandomRange, seededRandomRangeInt } from './utils/random.utils';
+import { AmbientLight } from './light/AmbientLight';
 import { Sunlight } from './light/Sunlight';
 import { Road } from './components/Road';
+import { Sky } from './components/Sky';
+import { CELL_SIZE, CHUNK_SIZE, DEFAULT_HEIGHT } from '../core/utils/constants';
 
 export default function Scene() {
   const { getActiveChunks } = useScene();
@@ -17,17 +20,13 @@ export default function Scene() {
 
   return (
     <div id='canvas-container' className='w-full h-full'>
-      <Canvas
-        onCreated={({ gl }) => {
-          gl.setClearColor(DAY_SKY_COLOR);
-        }}
-      >
-        <ambientLight intensity={1} />
+      <Canvas>
+        <Sky />
+        <AmbientLight />
         <Sunlight />
         <Camera
           position={new Vector3((CHUNK_SIZE * CELL_SIZE) / 2, DEFAULT_HEIGHT, (CHUNK_SIZE * CELL_SIZE) / 2)}
         />
-        <fog attach="fog" args={[DAY_SKY_COLOR, (CHUNK_SIZE * CELL_SIZE) * 0.6, (CHUNK_SIZE * CELL_SIZE) * 0.9]} />
         {activeChunks.map((chunk) => (
           <React.Fragment key={`chunk-${chunk.position.x}-${chunk.position.y}`}>
             <Terrain position={new Vector3(

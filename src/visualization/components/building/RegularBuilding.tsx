@@ -1,4 +1,5 @@
-import { BUILDING_COLORS, FLOOR_HEIGHT } from "../../../core/utils/constants";
+import { BUILDING_COLORS } from "./../../utils/constants";
+import { FLOOR_HEIGHT } from "../../../core/utils/constants";
 import { Vector3 } from "three";
 import * as THREE from "three";
 

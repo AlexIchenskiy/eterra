@@ -1,4 +1,4 @@
-import { BUILDING_COLORS, BUILDING_LIGHT_COLORS, BUILDING_OPTIONS, BuildingOption } from "../../../core/utils/constants";
+import { BUILDING_COLORS, BUILDING_LIGHT_COLORS, BUILDING_OPTIONS, BuildingOption } from "./../../utils/constants";
 import { Vector3 } from "three";
 import { RegularBuilding } from "./RegularBuilding";
 import { CircularBuilding } from "./CircularBuilding";
